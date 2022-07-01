@@ -11,14 +11,17 @@ import {
   Animated,
 } from 'react-native';
 import {COLOURS, Items} from '../database/Database';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {addToCart} from '../store/reducers/CartReducer';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
 
 const ProductInfo = ({route, navigation}) => {
   const {productID} = route.params;
 
   const [product, setProduct] = useState({});
+
+  const dispatch = useDispatch();
 
   const width = Dimensions.get('window').width;
 
@@ -43,29 +46,9 @@ const ProductInfo = ({route, navigation}) => {
     }
   };
 
-  const addToCart = async id => {
-    let itemArray = await AsyncStorage.getItem('cartItems');
-    itemArray = JSON.parse(itemArray);
-    if (itemArray) {
-      let array = itemArray;
-      array.push(id);
-
-      try {
-        await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-        navigation.navigate('Home');
-      } catch (error) {
-        return error;
-      }
-    } else {
-      let array = [];
-      array.push(id);
-      try {
-        await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-        navigation.navigate('Home');
-      } catch (error) {
-        return error;
-      }
-    }
+  const addItemToCart = itemId => {
+    dispatch(addToCart({id: itemId}));
+    navigation.navigate('Home');
   };
 
   const renderProduct = ({item}) => {
@@ -158,7 +141,7 @@ const ProductInfo = ({route, navigation}) => {
                 marginTop: 32,
               }}>
               {product.productImageList
-                ? product.productImageList.map((index) => {
+                ? product.productImageList.map(index => {
                     let opacity = position.interpolate({
                       inputRange: [index - 1, index, index + 1],
                       outputRange: [0.2, 1, 0.2],
@@ -305,7 +288,9 @@ const ProductInfo = ({route, navigation}) => {
             alignItems: 'center',
           }}>
           <TouchableOpacity
-            onPress={() => (product.isAvailable ? addToCart(product.id) : null)}
+            onPress={() =>
+              product.isAvailable ? addItemToCart(product.id) : null
+            }
             style={{
               width: '86%',
               height: '90%',

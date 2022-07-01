@@ -219,12 +219,6 @@ const Home = ({navigation}) => {
             style={{
               padding: 16,
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -240,7 +234,6 @@ const Home = ({navigation}) => {
                   Accessories
                 </Text>
               </View>
-            </View>
             <View
               style={{
                 flexDirection: 'row',
